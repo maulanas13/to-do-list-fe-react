@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import { BrowserRouter } from 'react-router-dom';
 import reducers from "./redux/reducers";
+import Thunk from "redux-thunk";
 
 ReactDOM.render(
   <Provider store={createStore(reducers, {}, applyMiddleware(Thunk))}>
