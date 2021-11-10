@@ -34,9 +34,9 @@
     align-items: center;
     display: flex;
     flex-direction: column;
+    margin-top: 16px;
 }
 
 .register-btn-wrap > button {
-    margin-top: 16px;
     width: 240px;
 }
