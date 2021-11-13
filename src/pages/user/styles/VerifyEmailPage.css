@@ -1,0 +1,14 @@
+.verif-email-main-wrap {
+    align-items: center;
+    display: flex;
+    min-height: 100vh;
+    min-width: 100vw;
+    justify-content: center;
+}
+
+.verif-email-sub-wrap {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
