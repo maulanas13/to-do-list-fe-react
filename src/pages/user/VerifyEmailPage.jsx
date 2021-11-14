@@ -1,43 +1,124 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import "./styles/VerifyEmailPage.css";
 import {Redirect, useParams} from "react-router-dom";
 import axios from "axios";
-// import {errorToast, successToast} from "../redux/actions";
+import { useDispatch } from 'react-redux';
+import afterEmailVerified from '../../redux/actions/AfterVerifiedAction';
 
 function VerifyEmailPage() {
-    const [redirectLoad, setRedirectLoad] = useState(false);
+    const [verifFail, setVerifFail] = useState(null);
+    console.log(verifFail);
+    const [redirectStat, setRedirectStat] = useState(null);
+
+    const dispatch = useDispatch();
 
     const {tokenEmailVerif} = useParams();
 
     const emailVerifyProcess = async () => {
         try {
             const res = await axios.get(`http://localhost:5010/auth/verify`, {headers: { "Authorization": `Bearer ${tokenEmailVerif}`} });
-            console.log("ini:", res.headers["x-token-access"]);
-            console.log(res.data);
+            console.log("Kirim backend bisa");
+            dispatch(afterEmailVerified(res.data)); // Ini klo gagal ternyata bs masuk catch
+            console.log("Lewatin dispatch");
+            setVerifFail(false);
+            console.log("Lewatin setVerif");
+            setTimeout(() => {
+                setRedirectStat(true);
+            }, 100000);
         } catch (error) {
-            console.log("Masuk error:", error);
-        }
+            console.log(error);
+            setVerifFail(true);
+            console.log("Lewatin setVerif gagal");
+            setTimeout(() => {
+                setRedirectStat(true);
+            }, 100000);
+        };
+    };
+
+    const triggerVerif = () => {
+        setTimeout(() => {
+            emailVerifyProcess();
+        }, 8000);
     }
 
-    useEffect(() => {
-        emailVerifyProcess();
-    }, [])
+    const renderVerifDefault = () => {
+        return (
+            <h1>Verification on progress, please wait...</h1>
+        )
+    };
 
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setRedirectLoad(true);
-    //     }, 5000)
-    // }, []);
+    const renderVerifSucces = () => {
+        return (
+            <>
+                <h1>Congratulation, your account has been verified!</h1>
+                <h2>Please wait, we will take you to dashboard...</h2>
+            </>
+        )
+    };
 
+    const renderVerifFail = () => {
+        return (
+            <>
+                <h1>Verification failed/expired!</h1>
+                <h2>Please try again, the page will redirect...</h2>
+            </>
+        )
+    }
+
+    // const renderProgressVerif = () => {
+    //     if (verifFail) { // Klo verifikasi gagal
+    //         return (
+    //             <>
+    //                 <h1>Verification failed/expired!</h1>
+    //                 <h2>Please try again, the page will redirect...</h2>
+    //             </>
+    //         )
+    //     } else if (verifFail === false) { // Klo verifikasi berhasil
+    //         return (
+    //             <>
+    //                 <h1>Congratulation, your account has been verified!</h1>
+    //                 <h2>Please wait, we will take you to dashboard...</h2>
+    //             </>
+    //         )
+    //     } else { // Render awal
+    //         return (
+    //             <>
+    //                 <h1>Verification on progress, please wait...</h1>
+    //             </>
+    //         )
+    //     }
+    // };
+    
     return (
         <>
+            {
+                verifFail === null ?
+                triggerVerif()
+                :
+                null
+            }
             <div className="verif-email-main-wrap">
                 <div className="verif-email-sub-wrap">
-                    {/* <h1>Congratulation! Your email account is verified!</h1> */}
-                    <h2>Please wait, we will redirect you to dashboard...</h2>
+                    {
+                        verifFail ? // Klo verifikasi gagal
+                        renderVerifFail()
+                        :
+                        verifFail === false ? // Klo verifikasi berhasil
+                        renderVerifSucces()
+                        :
+                        renderVerifDefault() // Render awal
+                    }
                 </div>
             </div>
-            {/* {redirectLoad ? <Redirect to="/register" /> : null} */}
+            {
+                (verifFail && redirectStat) ? // Klo verifikasi gagal
+                <Redirect to="/register" />
+                :
+                (verifFail === false && redirectStat) ? // Klo verifikasi berhasil
+                <Redirect to="/calendar" />
+                :
+                null // Render awal
+            }
         </>
     )
 }
