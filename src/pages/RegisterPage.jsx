@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
-import "./styles/RegisterPage.css"
+import "./styles/RegisterPage.css";
+import axios from "axios";
+import {errorToast, successToast} from "../redux/actions";
 
 function RegisterPage() {
     const [showPass, setShowPass] = useState("password");
@@ -14,6 +16,7 @@ function RegisterPage() {
     const inputUsernameRef = useRef();
     const inputPassRef = useRef();
     const inputConfirmPassRef = useRef();
+    const inputShowPassRef = useRef();
     const regisBtnRef = useRef();
 
     // HANDLER FUNCTIONS SECTION
@@ -57,6 +60,35 @@ function RegisterPage() {
     // CLICK FUNCTION SECTION
     const onSubmitRegister = async (event) => {
         event.preventDefault();
+        const { email, username, password } = registerInput;
+
+        // Cek semua input form terisi
+        if (email && username && password) {
+            // Cek input password sesuai/tidak
+            if (checkPass === password) {
+                try {
+                    const res = await axios.post(`http://localhost:5010/auth/register`, registerInput);
+                    // Notif bila username/email sudah terdaftar
+                    if (res.data.messageId === 1 || res.data.messageId === 2 || res.data.messageId === 3) {
+                        errorToast(res.data.message);
+                    }
+                    // Bila berhasil daftar
+                    successToast("Berhasil daftar! Cek email untuk verifikasi akun", 6000);
+                    setShowPass("password");
+                    inputShowPassRef.current.checked = false;
+                    setCheckPass("");
+                    setRegisterInput((prevState) => {
+                        return {...prevState, email:"", username:"", password:""}
+                    });
+                } catch (error) {
+                    errorToast("Server Error");
+                };
+            } else {
+                errorToast("Password tidak sesuai");
+            }
+        } else {
+            errorToast("Harap isi semua input");
+        };
     }
 
     return (
@@ -96,6 +128,7 @@ function RegisterPage() {
                         type={showPass}
                         className="form-control shadow-none"
                         ref={inputConfirmPassRef}
+                        value={checkPass}
                         onChange={confirmPassChangeHandler}
                         onKeyUp={(event) => onEnterSwitch(event, regisBtnRef)}
                     />
@@ -103,6 +136,7 @@ function RegisterPage() {
                         <input
                             type="checkbox"
                             className="align-self-start"
+                            ref={inputShowPassRef}
                             onClick={showPassHandler}
                         />{" "}
                         Show Password
@@ -110,8 +144,6 @@ function RegisterPage() {
                 </form>
                 <div className="register-btn-wrap">
                     <button 
-                        form="registerForm"
-                        type="submit"
                         className="btn btn-success shadow-none"
                         ref={regisBtnRef}
                         onClick={onSubmitRegister}
