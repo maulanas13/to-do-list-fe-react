@@ -6,10 +6,10 @@
   -moz-box-shadow: -2px 1px 24px 0px rgba(0, 0, 0, 0.49);
   height: 85vh;
   margin-top: 7vh;
-  width: 50% !important;
+  width: 40% !important;
 }
 .login-form {
-  padding-left: 60vh;
+  padding-left: 30vh;
   margin-top: 10vh;
 }
 .login-button {
@@ -18,9 +18,13 @@
   width: max-content;
   border: none;
   font-weight: bold;
-  padding-left: 10vh;
-  padding-right: 10vh;
+  padding-left: 8vh;
+  padding-right: 8vh;
   padding-top: 1vh;
   padding-bottom: 1vh;
-  margin-left: 55vh;
+  margin-left: 25vh;
+  margin-top: 50vh !important;
+}
+.signup-button {
+  margin-left: 45vh;
 }
