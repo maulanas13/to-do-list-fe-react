@@ -7,12 +7,14 @@ const INITIAL_STATE = {
   is_verified: null,
 };
 
-const AuthReducers = (state = INITIAL_STATE, action) => {
-  switch (type) {
-    case value:
-      return;
+const authReducers = (state = INITIAL_STATE, action) => {
+  switch (action.type) {
+    case "AFTER_VERIFIED":
+      return {...state, ...action.payload, is_login: true};
 
     default:
       return state;
   }
 };
+
+export default authReducers;
