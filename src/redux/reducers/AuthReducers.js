@@ -9,8 +9,10 @@ const INITIAL_STATE = {
 
 const authReducers = (state = INITIAL_STATE, action) => {
   switch (action.type) {
+    case "LOGIN":
+      return { ...state, ...action.payload, isLogin: true };
     case "AFTER_VERIFIED":
-      return {...state, ...action.payload, is_login: true};
+      return { ...state, ...action.payload, is_login: true };
 
     default:
       return state;
