@@ -1,0 +1,19 @@
+.todolist-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 1.1fr repeat(4, 1fr);
+  height: 100%;
+}
+
+.todolist-date {
+  border-left: 1px solid gainsboro;
+  border-right: 1px solid gainsboro;
+  border-bottom: 1px solid gainsboro;
+}
+
+.todolist-activity {
+  color: white;
+  max-width: 170px;
+  background-color: dodgerblue;
+  border-radius: 5px;
+}
