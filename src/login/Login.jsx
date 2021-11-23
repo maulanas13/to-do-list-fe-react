@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import { LoginAction } from "../redux/actions";
 import { Redirect } from "react-router";
 import Calendar from "../pages/user/CalenderPage";
-import { RestoreFromTrashRounded } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 
 class Login extends Component {

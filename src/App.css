@@ -13,6 +13,12 @@
   }
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -36,7 +42,6 @@
 
 .calender-hover:active {
   background-color: rgb(196, 193, 193);
-
   transition: all 0.3s;
 }
 
@@ -74,6 +79,33 @@
 }
 
 .calender-create:hover {
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+}
+
+.time-input {
+  border: none;
+}
+
+.modal-title {
+  border: none;
+  border-bottom: 1px solid black;
+}
+
+.modal-title:enabled {
+  outline: none;
+}
+
+.upload-file {
+  padding: 5px 15px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border-radius: 40px;
+  font-size: 0.8em;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.upload-file:hover {
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
