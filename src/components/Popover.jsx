@@ -9,7 +9,7 @@ function PopoverComponent({ open, anchorEl, handleClose }) {
       anchorEl={anchorEl}
       onClose={handleClose}
       anchorReference="anchorPosition"
-      anchorPosition={{ top: 140, left: 440 }}
+      anchorPosition={{ top: 190, left: 450 }}
       anchorOrigin={{
         vertical: "top",
         horizontal: "left",
@@ -20,7 +20,7 @@ function PopoverComponent({ open, anchorEl, handleClose }) {
       }}
       style={{ position: "absolute" }}
     >
-      <Calender width="250px" height="270px" padding="p-2" />
+      <Calender width="250px" height="260px" padding="p-2" id="1" />
     </Popover>
   );
 }

@@ -1,14 +1,16 @@
+import { useState } from "react";
 import Calender from "./../../components/Calender";
 import Header from "./../../components/Header";
 import Todolist from "./../../components/Todolist";
 import ModalTask from "./../../components/Modal";
 import PopoverComponent from "./../../components/Popover";
-
 import { AiOutlineClockCircle, AiOutlineFileImage } from "react-icons/ai";
 import { MdNotes } from "react-icons/md";
-import { useState } from "react";
+import axios from "axios";
+import API_URL from "../../helpers/ApiUrl";
+import { useSelector } from "react-redux";
 
-function App() {
+function CalenderPage() {
   const [openModal, setOpenModal] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
   const [targetPopover, setTargetPopover] = useState("");
@@ -19,6 +21,8 @@ function App() {
   const [endHourInput, setEndHourInput] = useState("0000");
   const [startHour, setStartHour] = useState("00:00");
   const [endHour, setEndHour] = useState("00:00");
+
+  const data = useSelector((state) => state.calenderReducers);
 
   const handlePopover = (e) => {
     setOpenPopover(!openPopover);
@@ -47,11 +51,11 @@ function App() {
       "September",
       "October",
       "November",
-      "Desember",
+      "December",
     ];
 
     return `${days[currentDate.getDay()]}, ${
-      months[currentDate.getMonth() + 1]
+      months[currentDate.getMonth()]
     } ${currentDate.getDate()}`;
   };
 
@@ -81,6 +85,21 @@ function App() {
       let sliceMinute = endHourInput.slice(2, 4);
 
       setEndHour(`${sliceHour}:${sliceMinute}`);
+    }
+  };
+
+  const onClickAdd = async () => {
+    const data = {
+      activity,
+      startHour,
+      endHour,
+      notes,
+    };
+    try {
+      console.log(data);
+      await axios.post(`${API_URL}/calendar/add`, data);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -165,7 +184,7 @@ function App() {
       </div>
     );
   };
-
+  console.log(data.currentDate);
   const renderModal = () => {
     return (
       <ModalTask
@@ -173,13 +192,15 @@ function App() {
         toggle={() => setOpenModal(!openModal)}
         title="Add Activity"
         body={renderModalBody()}
+        doSomething="Add"
+        handle={onClickAdd}
       />
     );
   };
 
   const renderPopover = () => {
     return (
-      <div style={{ width: "100px", height: "200px" }}>
+      <div style={{ width: "100px", height: "250px" }}>
         <PopoverComponent
           open={openPopover}
           anchorEl={targetPopover}
@@ -226,4 +247,4 @@ function App() {
   );
 }
 
-export default App;
+export default CalenderPage;

@@ -1,7 +1,7 @@
 .todolist-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: 1.1fr repeat(4, 1fr);
+  grid-template-rows: 1.2fr repeat(5, 1fr);
   height: 100%;
 }
 
@@ -12,8 +12,6 @@
 }
 
 .todolist-activity {
-  color: white;
-  max-width: 170px;
   background-color: dodgerblue;
   border-radius: 5px;
 }

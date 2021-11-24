@@ -1,15 +1,58 @@
 import "../App.css";
 import CalenderJs from "./CalenderJs";
 import { MdKeyboardArrowRight, MdKeyboardArrowLeft } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-function Calender() {
+function Calender({ width = "210px", height = "215px", padding, id }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [lastPick, setLastPick] = useState("");
+  const [changeDate, setChangeDate] = useState("");
   const calender = CalenderJs(currentYear, currentMonth, null, 6);
 
-  console.log(lastPick);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (lastPick === `${currentYear}-${currentMonth + 1}-${changeDate}`) {
+      setCurrentMonth(currentMonth + 1);
+      dispatch({
+        type: "CHANGEDATE",
+        payload: {
+          currentMonth: currentMonth + 1,
+        },
+      });
+    } else if (lastPick === `${currentYear + 1}-${1}-${changeDate}`) {
+      setCurrentMonth(1);
+      setCurrentYear(currentYear + 1);
+      dispatch({
+        type: "CHANGEDATE",
+        payload: {
+          currentMonth: 1,
+          currentYear: currentYear + 1,
+        },
+      });
+    }
+    if (lastPick === `${currentYear}-${currentMonth - 1}-${changeDate}`) {
+      setCurrentMonth(currentMonth - 1);
+      dispatch({
+        type: "CHANGEDATE",
+        payload: {
+          currentMonth: currentMonth - 1,
+        },
+      });
+    } else if (lastPick === `${currentYear - 1}-${12}-${changeDate}`) {
+      setCurrentMonth(12);
+      setCurrentYear(currentYear - 1);
+      dispatch({
+        type: "CHANGEDATE",
+        payload: {
+          currentMonth: 12,
+          currentYear: currentYear - 1,
+        },
+      });
+    }
+  }, [lastPick]);
 
   const renderDays = () => {
     const days = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -89,8 +132,8 @@ function Calender() {
               }
 
               if (value === lastPick) {
+                warna = "white";
                 className += " calender-pick-date";
-                console.log("masuk", value);
               }
             } else {
               if (count > daysInMonth(currentYear, currentMonth)) {
@@ -101,12 +144,22 @@ function Calender() {
                 } else {
                   value = `${currentYear}-${currentMonth + 1}-${elDate}`;
                 }
+
+                if (value === lastPick) {
+                  warna = "white";
+                  className += " calender-pick-date";
+                }
               } else {
                 count = 1;
+
                 if (currentMonth <= 1) {
                   value = `${currentYear - 1}-${12}-${elDate}`;
                 } else {
                   value = `${currentYear}-${currentMonth - 1}-${elDate}`;
+                }
+                if (value === lastPick) {
+                  warna = "white";
+                  className += " calender-pick-date";
                 }
               }
             }
@@ -120,7 +173,7 @@ function Calender() {
                 <form>
                   <span className={className} style={{ padding: "6px" }}>
                     <label
-                      for={value}
+                      for={!id ? value : value + "add"}
                       className="col-form-label p-2"
                       style={{
                         fontWeight: "600",
@@ -134,7 +187,7 @@ function Calender() {
 
                   <input
                     type="radio"
-                    id={value}
+                    id={!id ? value : value + "add"}
                     name="dates"
                     value={value}
                     checked={value === lastPick}
@@ -177,20 +230,8 @@ function Calender() {
     pick.forEach((el) => el.classList.remove("calender-pick-date"));
 
     setLastPick(e.target.value);
-
-    if (e.target.value === `${currentYear}-${currentMonth + 1}-${date}`) {
-      setCurrentMonth(currentMonth + 1);
-    } else if (e.target.value === `${currentYear + 1}-${1}-${date}`) {
-      setCurrentMonth(1);
-      setCurrentYear(currentYear + 1);
-    }
-
-    if (e.target.value === `${currentYear}-${currentMonth - 1}-${date}`) {
-      setCurrentMonth(currentMonth - 1);
-    } else if (e.target.value === `${currentYear - 1}-${12}-${date}`) {
-      setCurrentMonth(12);
-      setCurrentYear(currentYear - 1);
-    }
+    setChangeDate(date);
+    dispatch({ type: "CHANGEDATE", payload: { currentDate: e.target.value } });
 
     if (
       e.target.value ===
@@ -206,10 +247,11 @@ function Calender() {
 
   return (
     <div
+      className={padding}
       style={{
         fontFamily: "'Poppins', sans-serif",
-        width: "210px",
-        height: "215px",
+        width,
+        height,
       }}
     >
       <div className="d-flex flex-column" style={{ height: "30px" }}>
