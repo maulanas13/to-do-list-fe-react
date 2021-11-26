@@ -9,19 +9,21 @@ import { MdNotes } from "react-icons/md";
 import axios from "axios";
 import API_URL from "../../helpers/ApiUrl";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 function CalenderPage() {
   const [openModal, setOpenModal] = useState(false);
   const [openPopover, setOpenPopover] = useState(false);
   const [targetPopover, setTargetPopover] = useState("");
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [activity, setActivity] = useState("");
   const [notes, setNotes] = useState("");
-  const [startHourInput, setStartHourInput] = useState("0000");
-  const [endHourInput, setEndHourInput] = useState("0000");
-  const [startHour, setStartHour] = useState("00:00");
-  const [endHour, setEndHour] = useState("00:00");
+  const [startHour, setStartHour] = useState("");
+  const [startMinute, setStartMinute] = useState("");
+  const [endHour, setEndHour] = useState("");
+  const [endMinute, setEndMinute] = useState("");
+  const [file, setFile] = useState("");
 
+  const dispatch = useDispatch();
   const data = useSelector((state) => state.calenderReducers);
 
   const handlePopover = (e) => {
@@ -54,53 +56,85 @@ function CalenderPage() {
       "December",
     ];
 
-    return `${days[currentDate.getDay()]}, ${
-      months[currentDate.getMonth()]
-    } ${currentDate.getDate()}`;
+    return `${days[new Date(data.currentDate).getDay()]}, ${
+      months[new Date(data.currentDate).getMonth()]
+    } ${new Date(data.currentDate).getDate()}`;
   };
 
   const onChangeHour = (e) => {
     let numb = e.target.value;
 
-    if (numb.length > 4) {
-      return numb.slice(0, 4);
+    if (numb.length > 2) {
+      return numb.slice(0, 2);
     }
-    if (e.target.dataset.hour === "start") {
-      setStartHourInput(numb);
-      setStartHour(numb);
-    } else {
-      setEndHourInput(numb);
-      setEndHour(numb);
+
+    if (e.target.name == "startHour") {
+      setStartHour(e.target.value);
+      if (e.target.value >= 24) {
+        alert("invalid input");
+        setStartHour("23");
+      } else if (e.target.value < 0) {
+        alert("invalid input");
+        setStartHour("00");
+      }
+    } else if (e.target.name == "startMinute") {
+      setStartMinute(e.target.value);
+      if (e.target.value >= 60) {
+        alert("invalid input");
+        setStartMinute("59");
+      } else if (e.target.value < 0) {
+        alert("invalid input");
+        setStartMinute("00");
+      }
+    } else if (e.target.name == "endHour") {
+      setEndHour(e.target.value);
+      if (e.target.value >= 24) {
+        alert("invalid input");
+        setEndHour("23");
+      } else if (e.target.value < 0) {
+        alert("invalid input");
+        setEndHour("00");
+      }
+    } else if (e.target.name == "endMinute") {
+      setEndMinute(e.target.value);
+      if (e.target.value >= 60) {
+        alert("invalid input");
+        setEndMinute("59");
+      } else if (e.target.value < 0) {
+        alert("invalid input");
+        setEndMinute("00");
+      }
     }
   };
 
-  const onBlurHour = (e) => {
-    if (e.target.dataset.hour === "start") {
-      let sliceHour = startHourInput.slice(0, 2);
-      let sliceMinute = startHourInput.slice(2, 4);
-
-      setStartHour(`${sliceHour}:${sliceMinute}`);
-    } else {
-      let sliceHour = endHourInput.slice(0, 2);
-      let sliceMinute = endHourInput.slice(2, 4);
-
-      setEndHour(`${sliceHour}:${sliceMinute}`);
-    }
-  };
-
-  const onClickAdd = async () => {
-    const data = {
+  const onClickAdd = () => {
+    const dataActivity = {
+      date: data.currentDate,
       activity,
-      startHour,
-      endHour,
       notes,
+      start_hour: `${startHour}:${startMinute}`,
+      end_hour: `${endHour}:${endMinute}`,
     };
-    try {
-      console.log(data);
-      await axios.post(`${API_URL}/calendar/add`, data);
-    } catch (error) {
-      console.log(error);
-    }
+    console.log(dataActivity);
+  };
+
+  const onClickClose = () => {
+    setOpenModal(!openModal);
+    setFile("");
+    setActivity("");
+    setNotes("");
+    setStartHour("");
+    setStartMinute("");
+    setEndHour("");
+    setEndMinute("");
+    dispatch({
+      type: "CHANGEDATE",
+      payload: {
+        currentDate: `${new Date().getFullYear()}-${
+          new Date().getMonth() + 1
+        }-${new Date().getDate()}`,
+      },
+    });
   };
 
   const renderModalBody = () => {
@@ -128,39 +162,69 @@ function CalenderPage() {
               {renderDate()}
             </div>
             <div className="d-flex w-100 align-items-center">
-              <div style={{ width: "25%" }}>
-                <input
-                  type="text"
-                  placeholder="00"
-                  onChange={onChangeHour}
-                  onBlur={onBlurHour}
-                  value={startHour}
-                  data-hour="start"
-                  className="d-flex justify-content-center text-center w-100 time-input"
-                />
+              <div className="w-25 d-flex justify-content-center">
+                <div style={{ width: "40%" }}>
+                  <input
+                    type="number"
+                    placeholder="00"
+                    onChange={onChangeHour}
+                    value={startHour}
+                    name="startHour"
+                    className="d-flex justify-content-center text-center w-100 time-input"
+                  />
+                </div>
+                <div>:</div>
+                <div style={{ width: "40%" }}>
+                  <input
+                    type="number"
+                    placeholder="00"
+                    onChange={onChangeHour}
+                    value={startMinute}
+                    name="startMinute"
+                    className="d-flex justify-content-center text-center w-100 time-input"
+                  />
+                </div>
               </div>
               <div className="W-25 mx-2">-</div>
-              <div style={{ width: "25%" }}>
-                <input
-                  type="text"
-                  placeholder="00"
-                  onChange={onChangeHour}
-                  onBlur={onBlurHour}
-                  value={endHour}
-                  data-hour="end"
-                  className="d-flex justify-content-center text-center w-100 time-input"
-                />
+              <div className="w-25 d-flex justify-content-center">
+                <div style={{ width: "40%" }}>
+                  <input
+                    type="number"
+                    placeholder="00"
+                    onChange={onChangeHour}
+                    value={endHour}
+                    name="endHour"
+                    className="d-flex justify-content-center text-center w-100 time-input"
+                  />
+                </div>
+                <div>:</div>
+                <div style={{ width: "40%" }}>
+                  <input
+                    type="number"
+                    placeholder="00"
+                    onChange={onChangeHour}
+                    value={endMinute}
+                    name="endMinute"
+                    className="d-flex justify-content-center text-center w-100 time-input"
+                  />
+                </div>
               </div>
             </div>
           </div>
-          <div className="d-flex">
+          <div className="d-flex aling-items-center">
             <div className="mr-3">
               <AiOutlineFileImage style={{ fontSize: "1.5em" }} />
             </div>
-            <label for="upload-file" className="upload-file">
+            <label for="upload-file" className="upload-file mr-3">
               Add Image
             </label>
-            <input type="file" id="upload-file" style={{ display: "none" }} />
+            <input
+              type="file"
+              id="upload-file"
+              style={{ display: "none" }}
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            {file ? <div>{renderNameFile()}</div> : ""}
           </div>
           <div className="mt-3 d-flex">
             <div className="mr-3">
@@ -184,7 +248,7 @@ function CalenderPage() {
       </div>
     );
   };
-  console.log(data.currentDate);
+
   const renderModal = () => {
     return (
       <ModalTask
@@ -193,7 +257,8 @@ function CalenderPage() {
         title="Add Activity"
         body={renderModalBody()}
         doSomething="Add"
-        handle={onClickAdd}
+        handleDo={onClickAdd}
+        handleClose={onClickClose}
       />
     );
   };
@@ -208,6 +273,16 @@ function CalenderPage() {
         />
       </div>
     );
+  };
+
+  const renderNameFile = () => {
+    if (file.name.length > 10) {
+      let slice = file.name.slice(0, 10);
+
+      return slice + ".......";
+    } else {
+      return file.name;
+    }
   };
 
   return (

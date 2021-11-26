@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from "reactstrap";
 
-function ModalTask({ toggle, isOpen, title, body, handle, doSomething }) {
+function ModalTask({
+  toggle,
+  isOpen,
+  title,
+  body,
+  handleDo,
+  doSomething,
+  handleClose,
+}) {
   const [closeModal, setCloseModal] = useState(false);
 
   return (
@@ -9,10 +17,10 @@ function ModalTask({ toggle, isOpen, title, body, handle, doSomething }) {
       <ModalHeader toggle={toggle}>{title}</ModalHeader>
       <ModalBody>{body}</ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handle}>
+        <Button color="primary" onClick={handleDo}>
           {doSomething}
         </Button>{" "}
-        <Button onClick={toggle}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
       </ModalFooter>
     </Modal>
   );
